@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Chatbot n8n</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 600px;
+      margin: auto;
+      background: #f9f9f9;
+    }
+    h1 {
+      text-align: center;
+      color: #0077b6;
+    }
+    #chat {
+      border: 1px solid #ccc;
+      background: #fff;
+      padding: 10px;
+      height: 300px;
+      overflow-y: auto;
+      margin-bottom: 10px;
+    }
+    .msg {
+      margin: 5px 0;
+    }
+    .user {
+      font-weight: bold;
+      color: #023e8a;
+    }
+    .bot {
+      font-weight: bold;
+      color: #007f5f;
+    }
+    input[type="text"] {
+      width: 75%;
+      padding: 8px;
+      border: 1px solid #ccc;
+    }
+    button {
+      width: 22%;
+      padding: 8px;
+      background-color: #0077b6;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0096c7;
+    }
+  </style>
+</head>
+<body>
+  <h1>Chatta con noi</h1>
+  <div id="chat"></div>
+  <input type="text" id="msgInput" placeholder="Scrivi qui il tuo messaggio..." />
+  <button onclick="sendMessage()">Invia</button>
+
+  <script>
+    const chat = document.getElementById('chat');
+    const input = document.getElementById('msgInput');
+
+    function appendMessage(role, text) {
+      const msg = document.createElement('div');
+      msg.className = 'msg';
+      msg.innerHTML = `<span class="${role}">${role === 'user' ? 'Tu' : 'Bot'}:</span> ${text}`;
+      chat.appendChild(msg);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    function sendMessage() {
+      const userMessage = input.value.trim();
+      if (!userMessage) return;
+
+      appendMessage('user', userMessage);
+      input.value = '';
+
+      fetch('https://TUA-N8N-URL/webhook-chatbot', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: userMessage })
+      })
+      .then(res => res.json())
+      .then(data => {
+        appendMessage('bot', data.reply || 'Risposta non disponibile.');
+      })
+      .catch(() => {
+        appendMessage('bot', 'Errore nel server. Riprova più tardi.');
+      });
+    }
+  </script>
+</body>
+</html>
