@@ -78,7 +78,7 @@
       appendMessage('user', userMessage);
       input.value = '';
 
-      fetch('https://TUA-N8N-URL/webhook-chatbot', {
+      fetch('https://primary-production-f34cb.up.railway.app/webhook/3ca7d927-75c2-4cdf-a364-034781673f2e/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: userMessage })
